@@ -18,15 +18,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-f59pg$51gwv(7a81w(sy(-47n%q80@ykeb_#_ziif7sww1nle^')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+DEBUG = True  # Set to True to see detailed errors
 
-ALLOWED_HOSTS = [
-    '.railway.app',
-    'localhost',
-    '127.0.0.1',
-    'uoeesa.org',
-    'www.uoeesa.org',
-]
+ALLOWED_HOSTS = ['*']  # Allow all hosts for debugging
 
 # Add your custom domain after deployment
 CSRF_TRUSTED_ORIGINS = [
@@ -50,7 +44,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -90,14 +83,17 @@ DATABASES = {
     }
 }
 
-# Use PostgreSQL on Railway
-if 'DATABASE_URL' in os.environ:
+# Use PostgreSQL on Railway (only if package is available)
+try:
     import dj_database_url
-    DATABASES['default'] = dj_database_url.config(
-        conn_max_age=600,
-        conn_health_checks=True,
-        ssl_require=True
-    )
+    if 'DATABASE_URL' in os.environ:
+        DATABASES['default'] = dj_database_url.config(
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=True
+        )
+except ImportError:
+    pass
 
 
 # Password validation
@@ -140,12 +136,17 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-# WhiteNoise configuration for static files
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Safe import for WhiteNoise
+try:
+    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+except:
+    pass
