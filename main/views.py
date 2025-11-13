@@ -3,7 +3,7 @@ from django.http import JsonResponse, FileResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.mail import send_mail
 from django.conf import settings
-import requests
+
 import json
 import base64
 from datetime import datetime
