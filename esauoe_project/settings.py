@@ -16,9 +16,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-f59pg$51gwv(7a81w(sy(-47n%q80@ykeb_#_ziif7sww1nle^')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'  # Better debug handling
+DEBUG = True  # Set to True for local development
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')  # Allow all hosts for debugging
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']  # Local hosts only
 
 # Add your custom domain after deployment
 CSRF_TRUSTED_ORIGINS = [
@@ -146,10 +146,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Security settings for production
-if not DEBUG:
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
+# Development settings - disable all SSL for local
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
